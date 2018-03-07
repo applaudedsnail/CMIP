@@ -4,6 +4,10 @@
 #include "computer.h"
 #undef mips			/* gcc already has a def for mips */
 
+#define LAST(k,n) ((k) & ((1<<(n))-1))
+#define MID(k,m,n) LAST((k)>>(m),((n)-(m)))
+
+
 unsigned int endianSwap(unsigned int);
 
 void PrintInfo (int changedReg, int changedMem);
@@ -234,7 +238,8 @@ if(d->op == 0x00)
 		//Do Two's complement if sign Bit is 1
 		if(signBit == 1)
 		{
-			IMM = ~((instr >> 0) & 0xFFFF);
+			IMM = ~MID(IMM,0,16);
+			printf(" \n Here is the IMM: %d \n", IMM);
 		}
 		rVals->R_rd = IMM;
 		d->regs.i.addr_or_immed = IMM;
