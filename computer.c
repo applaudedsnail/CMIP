@@ -233,18 +233,20 @@ if(d->op == 0x00)
 		d->regs.i.rt = rt;
 
 	//	printf(" \n Here is the rt: %x \n", rt);
+		
 		int IMM = ((instr >> 0) & 0xFFFF);
 		signBit = ((IMM>> 15));
+
 		//Do Two's complement if sign Bit is 1
 		if(signBit == 1)
 		{
-			IMM = ~MID(IMM,0,16);
-			printf(" \n Here is the IMM: %d \n", IMM);
+			IMM = (MID(IMM,0,16));
+			IMM = ~IMM + 0x1;
+			IMM = (MID(IMM,0,16));
+			IMM = -IMM;
 		}
 		rVals->R_rd = IMM;
 		d->regs.i.addr_or_immed = IMM;
-
-		printf(" \n Here is the IMM: %d \n", IMM);
 	}
 	// J-Format
 	else if(d->op == 0x02 || d->op == 0x03)
@@ -308,12 +310,8 @@ void PrintInstruction ( DecodedInstr* d) {
 	//Instruction is addiu
 	else if(d->op == 0x09)
 	{
-		if(signBit == 0)
-			printf("addiu \t $%d, $%d, %d \n", d->regs.i.rt, d->regs.i.rs , d->regs.i.addr_or_immed);
-		else
-		{
-			printf("addiu \t $%d, $%d, %d \n", d->regs.i.rt, d->regs.i.rs , d->regs.i.addr_or_immed);
-		}
+		
+		printf("addiu \t $%d, $%d, %d \n", d->regs.i.rt, d->regs.i.rs , d->regs.i.addr_or_immed);
 	}
 	//Instruction is andi
 	else if(d->op == 0x0C)
@@ -496,7 +494,7 @@ int Execute ( DecodedInstr* d, RegVals* rVals) {
 	else if(d->op == 0x02)
 	{
 		jump = d->regs.j.target;
-		mips.pc = jump;		
+		mips.pc = jump - 4;		
 		return 0;
 	}
 	//Instruction is Jal
